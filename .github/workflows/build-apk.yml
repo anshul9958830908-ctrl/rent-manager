@@ -3,7 +3,8 @@ name: Build Rent Manager APK
 on:
 workflow_dispatch:
 push:
-branches: [main]
+branches:
+- main
 
 jobs:
 build:
@@ -28,7 +29,6 @@ yes | sdkmanager --licenses
 sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
 - name: Build APK
-working-directory: .
 run: gradle :app:assembleDebug --no-daemon
 
 - name: Upload APK
