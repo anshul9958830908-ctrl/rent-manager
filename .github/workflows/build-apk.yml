@@ -9,7 +9,6 @@ branches:
 jobs:
 build:
 runs-on: ubuntu-latest
-
 steps:
 - name: Checkout repository
 uses: actions/checkout@v4
@@ -29,7 +28,6 @@ yes | sdkmanager --licenses || true
 sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
 - name: Build APK
-working-directory: .
 run: gradle :app:assembleDebug --no-daemon
 
 - name: Upload APK
