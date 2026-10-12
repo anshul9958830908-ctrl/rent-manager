@@ -20,8 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String HOME_URL = "https://script.google.com/macros/s/AKfycbya8DK9ahttciYue5H8E68l9LJ4igvqiSz7cF3xPzBAckcxDpZMN0GBFIhH0q_wgx2s/exec
-";
+    private static final String HOME_URL = "https://script.google.com/macros/s/AKfycbya8DK9ahttciYue5H8E68l9LJ4igvqiSz7cF3xPzBAckcxDpZMN0GBFIhH0q_wgx2s/exec";
     private WebView webView;
     private SwipeRefreshLayout refresh;
     private TextView offline;
