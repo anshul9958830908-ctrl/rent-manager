@@ -51,7 +51,26 @@ public class MainActivity extends AppCompatActivity {
                 if (request.isForMainFrame()) showOffline();
             }
         });
-        refresh.setOnRefreshListener(() -> { if (hasInternet()) webView.reload(); else { refresh.setRefreshing(false); showOffline(); } });
+       refresh.setOnRefreshListener(() -> {
+if (hasInternet()) {
+webView.evaluateJavascript(
+"(function(){"
++ "var b=document.getElementById('refreshButton');"
++ "if(b){b.click();return 'button';}"
++ "if(typeof loadData==='function'){loadData(true);return 'loaded';}"
++ "return 'unavailable';"
++ "})()",
+result -> refresh.setRefreshing(false)
+);
+} else {
+refresh.setRefreshing(false);
+showOffline();
+}
+});
+
+
+
+
         loadHome();
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
