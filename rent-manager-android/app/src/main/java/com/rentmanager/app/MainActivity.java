@@ -106,8 +106,7 @@ try {
 String phone = uri.getQueryParameter("phone");
 String message = uri.getQueryParameter("text");
 
-Uri.Builder builder = Uri.parse("https://wa.me/")
-.buildUpon();
+Uri.Builder builder = Uri.parse("https://wa.me/").buildUpon();
 
 if (phone != null && !phone.isEmpty()) {
 builder.appendPath(phone);
@@ -119,6 +118,7 @@ builder.appendQueryParameter("text", message);
 
 startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 return true;
+
 } catch (Exception e) {
 android.widget.Toast.makeText(
 MainActivity.this,
