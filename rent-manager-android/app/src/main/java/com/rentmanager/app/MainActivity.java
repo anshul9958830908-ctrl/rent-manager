@@ -2,6 +2,8 @@ package com.rentmanager.app;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
@@ -61,6 +63,74 @@ webView.setWebChromeClient(new WebChromeClient());
 webView.setBackgroundColor(Color.WHITE);
 
 webView.setWebViewClient(new WebViewClient() {
+
+@Override
+public boolean shouldOverrideUrlLoading(
+WebView view,
+WebResourceRequest request) {
+return handleExternalUrl(request.getUrl().toString());
+}
+
+@Override
+public boolean shouldOverrideUrlLoading(
+WebView view,
+String url) {
+return handleExternalUrl(url);
+}
+
+private boolean handleExternalUrl(String url) {
+Uri uri = Uri.parse(url);
+String scheme = uri.getScheme();
+
+if (scheme == null) {
+return false;
+}
+
+boolean isWhatsApp =
+scheme.equalsIgnoreCase("whatsapp")
+|| url.startsWith("https://wa.me/")
+|| url.startsWith("https://api.whatsapp.com/send")
+|| url.startsWith("http://wa.me/");
+
+if (!isWhatsApp) {
+return false;
+}
+
+try {
+Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+startActivity(intent);
+return true;
+} catch (Exception e) {
+if (scheme.equalsIgnoreCase("whatsapp")) {
+String phone = uri.getQueryParameter("phone");
+String message = uri.getQueryParameter("text");
+
+if (phone != null && !phone.isEmpty()) {
+Uri.Builder builder = Uri.parse("https://wa.me/")
+.buildUpon()
+.appendPath(phone);
+
+if (message != null) {
+builder.appendQueryParameter("text", message);
+}
+
+try {
+startActivity(new Intent(
+Intent.ACTION_VIEW, builder.build()));
+} catch (Exception ex) {
+android.widget.Toast.makeText(
+MainActivity.this,
+"WhatsApp link open nahi ho paya.",
+android.widget.Toast.LENGTH_LONG
+).show();
+}
+}
+return true;
+}
+return true;
+}
+}
+
 @Override
 public void onPageFinished(WebView view, String url) {
 refresh.setRefreshing(false);
@@ -79,6 +149,7 @@ showOffline();
 }
 }
 });
+
 
 // IMPORTANT: only allow pull-to-refresh when WebView is
 // already at the very top. Scrolling within the page should
