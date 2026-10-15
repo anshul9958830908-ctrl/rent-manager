@@ -59,7 +59,16 @@ s.setUserAgentString(
 s.getUserAgentString() + " RentManagerAndroid/1.0"
 );
 
-webView.setWebChromeClient(new WebChromeClient());
+webView.setWebChromeClient(new WebChromeClient() {
+@Override
+public boolean onCreateWindow(
+WebView view,
+boolean isDialog,
+boolean isUserGesture,
+android.os.Message resultMsg) {
+return false;
+}
+});
 webView.setBackgroundColor(Color.WHITE);
 
 webView.setWebViewClient(new WebViewClient() {
@@ -90,45 +99,38 @@ boolean isWhatsApp =
 scheme.equalsIgnoreCase("whatsapp")
 || url.startsWith("https://wa.me/")
 || url.startsWith("https://api.whatsapp.com/send")
-|| url.startsWith("http://wa.me/");
-
-if (!isWhatsApp) {
-return false;
-}
-
+|| url.startsWith("http://wa.me/")
+|| url.startsWith("whatsapp://send");
+if (isWhatsApp) {
 try {
-Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-startActivity(intent);
-return true;
-} catch (Exception e) {
-if (scheme.equalsIgnoreCase("whatsapp")) {
 String phone = uri.getQueryParameter("phone");
 String message = uri.getQueryParameter("text");
 
-if (phone != null && !phone.isEmpty()) {
 Uri.Builder builder = Uri.parse("https://wa.me/")
-.buildUpon()
-.appendPath(phone);
+.buildUpon();
+
+if (phone != null && !phone.isEmpty()) {
+builder.appendPath(phone);
+}
 
 if (message != null) {
 builder.appendQueryParameter("text", message);
 }
 
-try {
-startActivity(new Intent(
-Intent.ACTION_VIEW, builder.build()));
-} catch (Exception ex) {
+startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+return true;
+} catch (Exception e) {
 android.widget.Toast.makeText(
 MainActivity.this,
 "WhatsApp link open nahi ho paya.",
 android.widget.Toast.LENGTH_LONG
 ).show();
-}
-}
 return true;
 }
-return true;
 }
+
+return false;
+
 }
 
 @Override
